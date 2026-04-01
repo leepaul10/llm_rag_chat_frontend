@@ -2,50 +2,194 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8" />
-    <!-- Title of the webpage shown on the browser tab -->
     <title>ChatLLM Bot</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    
-    <!-- Link to external CSS stylesheet  -->
-    <link rel="stylesheet" href="style.css" />
-    
-    <!-- Link to Font Awesome CDN for icons -->
+
+    <!-- Font Awesome for icons -->
     <link
         rel="stylesheet"
         href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
     />
+
+    <style>
+        /* Inline CSS */
+        * { box-sizing: border-box; margin:0; padding:0; }
+
+        body {
+            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            background: #4a4f53; 
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            color: #9d9d9d;
+            padding: 10px;
+        }
+
+        .container {
+            background: #201e1e;
+            width: 100%;
+            max-width: 600px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(98,0,0,0.1);
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            max-height: 600px;
+            overflow: hidden;
+        }
+
+        .chat-header {
+            display: flex;
+            align-items: center;
+            padding: 15px;
+            border-bottom: 1px solid #ff4000;
+            background: #292a2b;
+            flex-shrink: 0;
+        }
+
+        .bot-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .bot-info h3 {
+            font-size: 18px;
+            font-weight: 600;
+            color: #fff;
+        }
+
+        /* Spinning animation */
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .bot-header-logo {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            object-fit: cover;
+            animation: spin 4s linear infinite;
+        }
+
+        .chatbox {
+            flex-grow: 1;
+            padding: 15px;
+            overflow-y: auto;
+            background: #1e1e1e;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .message {
+            display: flex;
+            align-items: flex-end;
+            max-width: 85%;
+            min-width: 0;
+        }
+
+        .message.user { align-self: flex-end; }
+        .message.bot { align-self: flex-start; }
+
+        .bot-chat-logo {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-right: 8px;
+        }
+
+        .text-bubble {
+            padding: 10px 14px;
+            border-radius: 18px;
+            font-size: 14px;
+            line-height: 1.6;
+            white-space: pre-wrap;
+            overflow-wrap: break-word;
+            word-break: break-word;
+            min-width: 0;
+            max-width: 100%;
+            box-shadow: 0 1px 1px rgba(0,0,0,0.1);
+        }
+
+        .message.user .text-bubble {
+            background: #a7efaf;
+            color: #0b0c0d;
+            border-bottom-right-radius: 4px;
+        }
+
+        .message.bot .text-bubble {
+            background: #f2f2f2;
+            color: #191a1c;
+            border-bottom-left-radius: 4px;
+        }
+
+        .input-area {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            background: #212121;
+            border-top: 1px solid #b03921;
+            flex-shrink: 0;
+        }
+
+        input[type="text"] {
+            flex-grow: 1;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 25px;
+            font-size: 15px;
+            background: #353535;
+            outline: none;
+            min-width: 0;
+            color: #d7d7d7;
+        }
+
+        input[type="text"]::placeholder { color: #b5b2b2; opacity: 1; }
+        input[type="text"]:focus { background: #0b0b0b; }
+
+        button {
+            background: transparent;
+            color: #ff5e00;
+            border: none;
+            padding: 8px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        button:hover { color: #0095ff; }
+
+        /* Responsive adjustments */
+        @media (max-width: 480px) {
+            .container { max-height: 100vh; border-radius: 0; }
+        }
+    </style>
 </head>
 <body>
-    <!-- Main container holding all chat elements -->
     <div class="container">
-
-        <!-- Header section of the chat -->
         <header class="chat-header">
             <div class="bot-info">
-                <!-- Logo image for the bot -->
                 <img src="chatbotlogo.png" alt="ChatLLM Bot Logo" class="bot-header-logo">
-                <!-- Bot title -->
                 <h3>ChatLLM Bot</h3>
             </div>
         </header>
 
-        <!-- Chatbox div where messages will be dynamically added -->
-        <div id="chatbox" class="chatbox">
-        </div>
+        <div id="chatbox" class="chatbox"></div>
 
-        <!-- Input area for user to type message and send -->
         <div class="input-area">
-            <!-- Text input field for typing messages -->
             <input id="inputMessage" type="text" placeholder="Type a message..." autocomplete="off" />
-            <!-- Send button with paper plane icon -->
-            <button id="sendBtn">
-                <i class="fa-solid fa-paper-plane"></i>
-            </button>
+            <button id="sendBtn"><i class="fa-solid fa-paper-plane"></i></button>
         </div>
-        
     </div>
 
-    <!-- Link to external JavaScript file (commented out for now) -->
     <script src="script.js"></script>
 </body>
 </html>
