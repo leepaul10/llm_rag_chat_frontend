@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8" />
     <title>ChatLLM Bot</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, interactive-widget=resizes-content">
 
     <link
         rel="stylesheet"
@@ -13,17 +13,17 @@
     <style>
         * { box-sizing: border-box; margin:0; padding:0; }
 
-        /* FIX: Use 100dvh to account for mobile browser toolbars */
         body {
             font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
             background: #4a4f53; 
             display: flex;
             justify-content: center;
             align-items: center;
+            /* FIX: Use 100dvh (Dynamic Viewport Height) for mobile browser bars */
             height: 100dvh; 
             color: #9d9d9d;
             padding: 10px;
-            overflow: hidden; /* Prevents background bouncing */
+            overflow: hidden;
         }
 
         .container {
@@ -31,13 +31,12 @@
             width: 100%;
             max-width: 600px;
             border-radius: 12px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.5);
             display: flex;
             flex-direction: column;
             height: 100%;
             max-height: 100%; 
             overflow: hidden;
-            transition: height 0.1s ease-out; /* Smooth transition for keyboard */
         }
 
         .chat-header {
@@ -74,7 +73,6 @@
             animation: spin 4.5s linear infinite;
         }
 
-        /* FIX: min-height: 0 allows the chatbox to shrink when keyboard opens */
         .chatbox {
             flex-grow: 1;
             padding: 15px;
@@ -83,8 +81,8 @@
             display: flex;
             flex-direction: column;
             gap: 10px;
+            /* FIX: min-height 0 allows flex container to shrink when keyboard opens */
             min-height: 0; 
-            -webkit-overflow-scrolling: touch; /* Smooth scrolling for iOS */
         }
 
         .chatbox::-webkit-scrollbar { width: 6px; }
@@ -147,7 +145,8 @@
             padding: 12px 15px;
             border: none;
             border-radius: 25px;
-            font-size: 16px; /* 16px prevents iOS auto-zoom on focus */
+            /* FIX: 16px font prevents iOS from "zooming in" and breaking layout */
+            font-size: 16px; 
             background: #353535;
             outline: none;
             min-width: 0;
@@ -168,14 +167,10 @@
             align-items: center;
             justify-content: center;
             flex-shrink: 0;
-            transition: color 0.2s ease;
         }
 
-        button:hover { color: #0095ff; }
-
-        /* MOBILE FIXES */
         @media (max-width: 480px) {
-            body { padding: 0; } /* Remove padding so container hits screen edges */
+            body { padding: 0; }
             .container {
                 max-width:100%; 
                 height: 100dvh; 
@@ -188,7 +183,7 @@
     <div class="container">
         <header class="chat-header">
             <div class="bot-info">
-                <img src="LLMlogo.jpeg" alt="ChatLLM Bot Logo" class="bot-header-logo">
+                <img src="LLMlogo.jpeg" alt="ChatLLM Bot" class="bot-header-logo">
                 <h3>ChatLLM</h3>
             </div>
         </header>
@@ -202,7 +197,6 @@
     </div>
 
     <script>
-        // Integrated Script to handle the chat logic
         const chatbox = document.getElementById('chatbox');
         const inputMessage = document.getElementById('inputMessage');
         const sendBtn = document.getElementById('sendBtn');
@@ -210,34 +204,40 @@
         function appendMessage(text, sender) {
             const msgDiv = document.createElement('div');
             msgDiv.className = `message ${sender}`;
-            
-            let html = sender === 'bot' ? '<img src="LLMlogo.jpeg" class="bot-chat-logo">' : '';
+            let html = sender === 'bot' ? `<img src="LLMlogo.jpeg" class="bot-chat-logo">` : '';
             html += `<div class="text-bubble">${text}</div>`;
-            
             msgDiv.innerHTML = html;
             chatbox.appendChild(msgDiv);
             chatbox.scrollTop = chatbox.scrollHeight;
         }
 
+        // Logic to actually "read" your input
+        function getResponse(text) {
+            const input = text.toLowerCase();
+            if (input.includes("hello") || input.includes("hi")) return "Hello! How can I help you on mobile today?";
+            if (input.includes("who are you")) return "I am ChatLLM, your local assistant.";
+            return "You said: '" + text + "'. I am processing that!";
+        }
+
         function handleSend() {
             const val = inputMessage.value.trim();
             if(!val) return;
+            
             appendMessage(val, 'user');
             inputMessage.value = '';
-            
-            // Mock bot response
+
             setTimeout(() => {
-                appendMessage("I'm responding perfectly on mobile!", "bot");
+                const botReply = getResponse(val);
+                appendMessage(botReply, 'bot');
             }, 600);
         }
 
         sendBtn.addEventListener('click', handleSend);
         inputMessage.addEventListener('keypress', (e) => { if(e.key === 'Enter') handleSend(); });
 
-        // Fix for keyboard height on iOS/Chrome mobile
+        // Force scroll when keyboard pops up
         if (window.visualViewport) {
             window.visualViewport.addEventListener('resize', () => {
-                document.body.style.height = window.visualViewport.height + 'px';
                 chatbox.scrollTop = chatbox.scrollHeight;
             });
         }
