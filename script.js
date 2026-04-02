@@ -13,7 +13,7 @@ function appendMessage(text,sender){
 
     if(sender=="bot"){
         const iconImg=document.createElement("img");
-        iconImg.src="chatbotlogo.png"
+        iconImg.src="LLMlogopng.png"
         iconImg.classList.add("bot-chat-logo");
         iconImg.alt="bot logo";
         msgDiv.appendChild(iconImg);
@@ -32,7 +32,7 @@ async function sendMessage(){
     inputMessage.value = '';
     sendBtn.disabled=true;
     try {
-        const response = await fetch('https://llm-rag-chat-backend.onrender.com', {
+        const response = await fetch('https://llm-rag-chat.onrender.com', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ message }),
