@@ -169,7 +169,7 @@
     <div class="container">
         <header class="chat-header">
             <div class="bot-info">
-                <img src="LLMlogo.jpeg" class="bot-header-logo">
+                <img src="LLMlogopng.png" class="bot-header-logo">
                 <h3>ChatLLM</h3>
             </div>
         </header>
@@ -210,9 +210,6 @@
             addMessage(text, "user");
             input.value = "";
 
-            setTimeout(() => {
-                addMessage("Typing response...", "bot");
-            }, 500);
         }
 
         sendBtn.addEventListener("click", sendMessage);
@@ -228,8 +225,7 @@
             }, 300);
         });
 
-        // Test message
-        addMessage("Hello! I'm your ChatLLM bot 👋", "bot");
+        
     </script>
 </body>
 </html>
