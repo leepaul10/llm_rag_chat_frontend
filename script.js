@@ -33,14 +33,10 @@ async function sendMessage(){
     sendBtn.disabled=true;
     try {
         const response = await fetch('https://llm-rag-chat.onrender.com/chat', {
-  method: 'POST',
-  headers: {
-    'Content-Type': 'application/json'
-  },
-  body: JSON.stringify({
-    query: userInput  // or whatever your input variable is
-  })
-})
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ message }),
+        });
         if (!response.ok) throw new Error("Network response was not ok");
         const data = await response.json();
         // data.reply
