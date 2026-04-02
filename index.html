@@ -211,13 +211,6 @@
             chatbox.scrollTop = chatbox.scrollHeight;
         }
 
-        // Logic to actually "read" your input
-        function getResponse(text) {
-            const input = text.toLowerCase();
-            if (input.includes("hello") || input.includes("hi")) return "Hello! How can I help you on mobile today?";
-            if (input.includes("who are you")) return "I am ChatLLM, your local assistant.";
-            return "You said: '" + text + "'. I am processing that!";
-        }
 
         function handleSend() {
             const val = inputMessage.value.trim();
