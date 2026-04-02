@@ -1,197 +1,181 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8" />
-    <title>ChatLLM Bot</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+/* Inline CSS */
+* { box-sizing: border-box; margin:0; padding:0; }
 
-    <!-- Font Awesome for icons -->
-    <link
-        rel="stylesheet"
-        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
-    />
+body {
+    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    background: #4a4f53; 
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    color: #9d9d9d;
+    padding: 10px;
+}
 
-    <style>
-        /* Inline CSS */
-        * { box-sizing: border-box; margin:0; padding:0; }
+.container {
+    background: #201e1e;
+    width: 100%;
+    max-width: 600px;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(98,0,0,0.1);
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    max-height: 600px;
+    overflow: hidden;
+}
 
-        body {
-            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-            background: #4a4f53; 
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            color: #9d9d9d;
-            padding: 10px;
-        }
+.chat-header {
+    display: flex;
+    align-items: center;
+    padding: 15px;
+    border-bottom: 1px solid #ff4000;
+    background: #292a2b;
+    flex-shrink: 0;
+}
 
-        .container {
-            background: #201e1e;
-            width: 100%;
-            max-width: 600px;
-            border-radius: 12px;
-            box-shadow: 0 4px 12px rgba(98,0,0,0.1);
-            display: flex;
-            flex-direction: column;
-            height: 100%;
-            max-height: 600px;
-            overflow: hidden;
-        }
+.bot-info {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
 
-        .chat-header {
-            display: flex;
-            align-items: center;
-            padding: 15px;
-            border-bottom: 1px solid #ff4000;
-            background: #292a2b;
-            flex-shrink: 0;
-        }
+.bot-info h3 {
+    font-size: 18px;
+    font-weight: 600;
+    color: #fff;
+}
 
-        .bot-info {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
+/* Spinning animation */
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
 
-        .bot-info h3 {
-            font-size: 18px;
-            font-weight: 600;
-            color: #fff;
-        }
+.bot-header-logo {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    object-fit: cover;
+    animation: spin 4.5s linear infinite;
+}
 
-        /* Spinning animation */
-        @keyframes spin {
-            from { transform: rotate(0deg); }
-            to { transform: rotate(360deg); }
-        }
+.chatbox {
+    flex-grow: 1;
+    min-height: 0; /* ✅ FIX */
+    padding: 15px;
+    padding-bottom: 70px; /* ✅ space for fixed input */
+    overflow-y: auto;
+    background: #343434;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
 
-        .bot-header-logo {
-            width: 32px;
-            height: 32px;
-            border-radius: 50%;
-            object-fit: cover;
-            animation: spin 4.5s linear infinite;
-        }
+.message {
+    display: flex;
+    align-items: flex-end;
+    max-width: 85%;
+    min-width: 0;
+}
 
-        .chatbox {
-            flex-grow: 1;
-            padding: 15px;
-            overflow-y: auto;
-            background: #343434;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
+.message.user { align-self: flex-end; }
+.message.bot { align-self: flex-start; }
 
-        .message {
-            display: flex;
-            align-items: flex-end;
-            max-width: 85%;
-            min-width: 0;
-        }
+.bot-chat-logo {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-right: 8px;
+}
 
-        .message.user { align-self: flex-end; }
-        .message.bot { align-self: flex-start; }
+.text-bubble {
+    padding: 10px 14px;
+    border-radius: 18px;
+    font-size: 14px;
+    line-height: 1.6;
+    white-space: pre-wrap;
+    overflow-wrap: break-word;
+    word-break: break-word;
+    min-width: 0;
+    max-width: 100%;
+    box-shadow: 0 1px 1px rgba(0,0,0,0.1);
+}
 
-        .bot-chat-logo {
-            width: 24px;
-            height: 24px;
-            border-radius: 50%;
-            object-fit: cover;
-            margin-right: 8px;
-        }
+.message.user .text-bubble {
+    background: #a7efaf;
+    color: #0b0c0d;
+    border-bottom-right-radius: 4px;
+}
 
-        .text-bubble {
-            padding: 10px 14px;
-            border-radius: 18px;
-            font-size: 14px;
-            line-height: 1.6;
-            white-space: pre-wrap;
-            overflow-wrap: break-word;
-            word-break: break-word;
-            min-width: 0;
-            max-width: 100%;
-            box-shadow: 0 1px 1px rgba(0,0,0,0.1);
-        }
+.message.bot .text-bubble {
+    background: #f2f2f2;
+    color: #191a1c;
+    border-bottom-left-radius: 4px;
+}
 
-        .message.user .text-bubble {
-            background: #a7efaf;
-            color: #0b0c0d;
-            border-bottom-right-radius: 4px;
-        }
+/* ✅ FIX: make input fixed */
+.input-area {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    max-width: 600px;
+    margin: auto;
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    background: #212121;
+    border-top: 1px solid #b03921;
+    flex-shrink: 0;
+}
 
-        .message.bot .text-bubble {
-            background: #f2f2f2;
-            color: #191a1c;
-            border-bottom-left-radius: 4px;
-        }
+input[type="text"] {
+    flex-grow: 1;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 25px;
+    font-size: 15px;
+    background: #353535;
+    outline: none;
+    min-width: 0;
+    color: #d7d7d7;
+}
 
-        .input-area {
-            display: flex;
-            align-items: center;
-            padding: 10px;
-            background: #212121;
-            border-top: 1px solid #b03921;
-            flex-shrink: 0;
-        }
+input[type="text"]::placeholder { color: #b5b2b2; opacity: 1; }
+input[type="text"]:focus { background: #0b0b0b; }
 
-        input[type="text"] {
-            flex-grow: 1;
-            padding: 10px 15px;
-            border: none;
-            border-radius: 25px;
-            font-size: 15px;
-            background: #353535;
-            outline: none;
-            min-width: 0;
-            color: #d7d7d7;
-        }
+button {
+    background: transparent;
+    color: #ff5e00;
+    border: none;
+    padding: 8px;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
 
-        input[type="text"]::placeholder { color: #b5b2b2; opacity: 1; }
-        input[type="text"]:focus { background: #0b0b0b; }
+button:hover { color: #0095ff; }
 
-        button {
-            background: transparent;
-            color: #ff5e00;
-            border: none;
-            padding: 8px;
-            border-radius: 50%;
-            cursor: pointer;
-            font-size: 18px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-shrink: 0;
-        }
+/* Responsive adjustments */
+@media (max-width: 480px) {
+    .container {
+        max-width:100%;
+        max-height: 100dvh;
+        height: 100dvh;
+        border-radius: 0;
+        padding: 0;
+    }
 
-        button:hover { color: #0095ff; }
-
-        /* Responsive adjustments */
-        @media (max-width: 480px) {
-            .container {max-width:100% ; max-height: 100dvh; height: 100dvh ; border-radius: 0; padding: 0 ; }
-        }
-        
-
-    </style>
-</head>
-<body>
-    <div class="container">
-        <header class="chat-header">
-            <div class="bot-info">
-                <img src="LLMlogo.jpeg" alt="ChatLLM Bot Logo" class="bot-header-logo">
-                <h3>ChatLLM </h3>
-            </div>
-        </header>
-
-        <div id="chatbox" class="chatbox"></div>
-
-        <div class="input-area">
-            <input id="inputMessage" type="text" placeholder="Type a message..." autocomplete="off" />
-            <button id="sendBtn"><i class="fa-solid fa-paper-plane"></i></button>
-        </div>
-    </div>
-
-    <script src="script.js"></script>
-</body>
-</html>
+    /* ✅ ensure input spans full width on mobile */
+    .input-area {
+        max-width: 100%;
+    }
+}
+</style>
