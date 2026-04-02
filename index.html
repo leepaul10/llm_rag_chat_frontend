@@ -169,7 +169,7 @@
 
         button:hover { color: #0095ff; }
 
-        /* Mobile fixes for input rise only */
+        /* Mobile fixes */
         @media (max-width: 480px) {
             body {
                 display: block;
@@ -179,7 +179,9 @@
             }
 
             .container {
-                position: relative; /* container stays in place */
+                position: fixed;
+                top: 0;
+                left: 0;
                 width: 100%;
                 height: 100dvh;
                 max-height: 100dvh;
@@ -188,17 +190,9 @@
                 flex-direction: column;
             }
 
-            .chatbox {
-                flex-grow: 1;
-                overflow-y: auto;
-                padding-bottom: 60px; /* space for input */
-            }
-
             .input-area {
-                position: absolute; /* detach input from flow */
+                position: sticky;
                 bottom: 0;
-                left: 0;
-                width: 100%;
                 z-index: 10;
             }
         }
@@ -221,16 +215,6 @@
         </div>
     </div>
 
-    <script>
-        // optional: scroll chat to bottom when input is focused (mobile)
-        const input = document.getElementById('inputMessage');
-        const chatbox = document.getElementById('chatbox');
-
-        input.addEventListener('focus', () => {
-            setTimeout(() => {
-                chatbox.scrollTop = chatbox.scrollHeight;
-            }, 300);
-        });
-    </script>
+    <script src="script.js"></script>
 </body>
 </html>
