@@ -5,14 +5,13 @@
     <title>ChatLLM Bot</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <!-- Font Awesome for icons -->
+    <!-- Font Awesome -->
     <link
         rel="stylesheet"
         href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
     />
 
     <style>
-        /* Inline CSS */
         * { box-sizing: border-box; margin:0; padding:0; }
 
         body {
@@ -21,9 +20,8 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh;
+            height: 100dvh; /* ✅ stable height */
             color: #9d9d9d;
-            padding: 10px;
         }
 
         .container {
@@ -31,12 +29,11 @@
             width: 100%;
             max-width: 600px;
             border-radius: 12px;
-            box-shadow: 0 4px 12px rgba(98,0,0,0.1);
             display: flex;
             flex-direction: column;
             height: 100%;
-            max-height: 600px;
             overflow: hidden;
+            position: relative;
         }
 
         .chat-header {
@@ -56,11 +53,9 @@
 
         .bot-info h3 {
             font-size: 18px;
-            font-weight: 600;
             color: #fff;
         }
 
-        /* Spinning animation */
         @keyframes spin {
             from { transform: rotate(0deg); }
             to { transform: rotate(360deg); }
@@ -70,13 +65,14 @@
             width: 32px;
             height: 32px;
             border-radius: 50%;
-            object-fit: cover;
             animation: spin 4.5s linear infinite;
         }
 
         .chatbox {
             flex-grow: 1;
+            min-height: 0; /* ✅ critical fix */
             padding: 15px;
+            padding-bottom: 80px; /* ✅ space for fixed input */
             overflow-y: auto;
             background: #343434;
             display: flex;
@@ -86,33 +82,18 @@
 
         .message {
             display: flex;
-            align-items: flex-end;
             max-width: 85%;
-            min-width: 0;
         }
 
         .message.user { align-self: flex-end; }
         .message.bot { align-self: flex-start; }
-
-        .bot-chat-logo {
-            width: 24px;
-            height: 24px;
-            border-radius: 50%;
-            object-fit: cover;
-            margin-right: 8px;
-        }
 
         .text-bubble {
             padding: 10px 14px;
             border-radius: 18px;
             font-size: 14px;
             line-height: 1.6;
-            white-space: pre-wrap;
-            overflow-wrap: break-word;
             word-break: break-word;
-            min-width: 0;
-            max-width: 100%;
-            box-shadow: 0 1px 1px rgba(0,0,0,0.1);
         }
 
         .message.user .text-bubble {
@@ -127,13 +108,21 @@
             border-bottom-left-radius: 4px;
         }
 
+        /* ✅ FIXED INPUT AREA */
         .input-area {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            max-width: 600px;
+            margin: auto;
+            right: 0;
             display: flex;
             align-items: center;
             padding: 10px;
             background: #212121;
             border-top: 1px solid #b03921;
-            flex-shrink: 0;
+            z-index: 1000;
         }
 
         input[type="text"] {
@@ -143,55 +132,104 @@
             border-radius: 25px;
             font-size: 15px;
             background: #353535;
-            outline: none;
-            min-width: 0;
             color: #d7d7d7;
+            outline: none;
         }
 
-        input[type="text"]::placeholder { color: #b5b2b2; opacity: 1; }
-        input[type="text"]:focus { background: #0b0b0b; }
+        input::placeholder { color: #b5b2b2; }
 
         button {
             background: transparent;
             color: #ff5e00;
             border: none;
             padding: 8px;
-            border-radius: 50%;
-            cursor: pointer;
             font-size: 18px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-shrink: 0;
+            cursor: pointer;
         }
 
-        button:hover { color: #0095ff; }
-
-        /* Responsive adjustments */
+        /* Mobile full screen */
         @media (max-width: 480px) {
-            .container {max-width:100% ; max-height: 100dvh; height: 100dvh ; border-radius: 0; padding: 0 ; }
-        }
-        
+            body {
+                align-items: stretch;
+            }
 
+            .container {
+                max-width: 100%;
+                border-radius: 0;
+            }
+
+            .input-area {
+                max-width: 100%;
+            }
+        }
     </style>
 </head>
+
 <body>
     <div class="container">
         <header class="chat-header">
             <div class="bot-info">
-                <img src="LLMlogo.jpeg" alt="ChatLLM Bot Logo" class="bot-header-logo">
-                <h3>ChatLLM </h3>
+                <img src="LLMlogo.jpeg" class="bot-header-logo">
+                <h3>ChatLLM</h3>
             </div>
         </header>
 
         <div id="chatbox" class="chatbox"></div>
 
         <div class="input-area">
-            <input id="inputMessage" type="text" placeholder="Type a message..." autocomplete="off" />
-            <button id="sendBtn"><i class="fa-solid fa-paper-plane"></i></button>
+            <input id="inputMessage" type="text" placeholder="Type a message..." />
+            <button id="sendBtn">
+                <i class="fa-solid fa-paper-plane"></i>
+            </button>
         </div>
     </div>
 
-    <script src="script.js"></script>
+    <script>
+        const chatbox = document.getElementById("chatbox");
+        const input = document.getElementById("inputMessage");
+        const sendBtn = document.getElementById("sendBtn");
+
+        function addMessage(text, sender) {
+            const msg = document.createElement("div");
+            msg.classList.add("message", sender);
+
+            const bubble = document.createElement("div");
+            bubble.classList.add("text-bubble");
+            bubble.innerText = text;
+
+            msg.appendChild(bubble);
+            chatbox.appendChild(msg);
+
+            chatbox.scrollTop = chatbox.scrollHeight;
+        }
+
+        function sendMessage() {
+            const text = input.value.trim();
+            if (!text) return;
+
+            addMessage(text, "user");
+            input.value = "";
+
+            setTimeout(() => {
+                addMessage("Typing response...", "bot");
+            }, 500);
+        }
+
+        sendBtn.addEventListener("click", sendMessage);
+
+        input.addEventListener("keypress", (e) => {
+            if (e.key === "Enter") sendMessage();
+        });
+
+        /* ✅ Prevent chat jump on mobile */
+        input.addEventListener("focus", () => {
+            setTimeout(() => {
+                chatbox.scrollTop = chatbox.scrollHeight;
+            }, 300);
+        });
+
+        // Test message
+        addMessage("Hello! I'm your ChatLLM bot 👋", "bot");
+    </script>
 </body>
 </html>
