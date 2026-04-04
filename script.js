@@ -13,7 +13,7 @@ function appendMessage(text,sender){
 
     if(sender=="bot"){
         const iconImg=document.createElement("img");
-        iconImg.src="LLMlogopng.png"
+        iconImg.src="LLMlogo.jpeg"
         iconImg.classList.add("bot-chat-logo");
         iconImg.alt="bot logo";
         msgDiv.appendChild(iconImg);
